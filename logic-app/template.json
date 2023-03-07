@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_joined_workflow_name": {
+            "defaultValue": "joined-workflow",
+            "type": "String"
+        },
+        "sites_datahub_test_function_app_externalid": {
+            "defaultValue": "/subscriptions/3e8f0069-276d-42ab-ba62-b4f7ecb3afdc/resourceGroups/datasource_resource_group/providers/Microsoft.Web/sites/datahub-test-function-app",
+            "type": "String"
+        },
+        "connections_outlook_externalid": {
+            "defaultValue": "/subscriptions/3e8f0069-276d-42ab-ba62-b4f7ecb3afdc/resourceGroups/joined-workflow-resource-group/providers/Microsoft.Web/connections/outlook",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_joined_workflow_name')]",
+            "location": "eastus",
+            "properties": {
+                "state": "Disabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "Recurrence": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 5
+                            },
+                            "evaluatedRecurrence": {
+                                "frequency": "Minute",
+                                "interval": 5
+                            },
+                            "type": "Recurrence"
+                        }
+                    },
+                    "actions": {
+                        "HttpExample": {
+                            "runAfter": {},
+                            "type": "Function",
+                            "inputs": {
+                                "function": {
+                                    "id": "[concat(parameters('sites_datahub_test_function_app_externalid'), '/functions/HttpExample')]"
+                                },
+                                "method": "GET",
+                                "queries": {
+                                    "name": "Jens"
+                                }
+                            }
+                        },
+                        "Send_an_email_(V2)": {
+                            "runAfter": {
+                                "HttpExample": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "Body": "<p>Body: @{body('HttpExample')}<br>\n<br>\nStatus Code: @{outputs('HttpExample')['statusCode']}</p>",
+                                    "Importance": "Normal",
+                                    "Subject": "Mail Sent From Logic App. HTTP Status Code: @{outputs('HttpExample')['statusCode']}",
+                                    "To": "cra001@narratech.net"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['outlook']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/Mail"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "outlook": {
+                                "connectionId": "[parameters('connections_outlook_externalid')]",
+                                "connectionName": "outlook",
+                                "id": "/subscriptions/3e8f0069-276d-42ab-ba62-b4f7ecb3afdc/providers/Microsoft.Web/locations/eastus/managedApis/outlook"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

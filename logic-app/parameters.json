@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_joined_workflow_name": {
+            "value": "joined-workflow"
+        },
+        "sites_datahub_test_function_app_externalid": {
+            "value": "/subscriptions/3e8f0069-276d-42ab-ba62-b4f7ecb3afdc/resourceGroups/datasource_resource_group/providers/Microsoft.Web/sites/datahub-test-function-app"
+        },
+        "connections_outlook_externalid": {
+            "value": "/subscriptions/3e8f0069-276d-42ab-ba62-b4f7ecb3afdc/resourceGroups/joined-workflow-resource-group/providers/Microsoft.Web/connections/outlook"
+        }
+    }
+}
