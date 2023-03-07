@@ -23,7 +23,7 @@ namespace My.Functions
 
             string responseMessage = string.IsNullOrEmpty(name)
                 ? "What in tarnation?!"
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
+                : $"Hello, {name}. A man has fallen into the river in Lego City!";
 
             return new OkObjectResult(responseMessage);
         }
