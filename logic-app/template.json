@@ -71,7 +71,7 @@
                                 "body": {
                                     "Body": "<p>Body: @{body('HttpExample')}<br>\n<br>\nStatus Code: @{outputs('HttpExample')['statusCode']}</p>",
                                     "Importance": "Normal",
-                                    "Subject": "Mail Sent From Logic App. HTTP Status Code: @{outputs('HttpExample')['statusCode']}",
+                                    "Subject": "Sent From Logic App. HTTP Status Code: @{outputs('HttpExample')['statusCode']}",
                                     "To": "cra001@narratech.net"
                                 },
                                 "host": {
